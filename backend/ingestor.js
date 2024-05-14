@@ -29,7 +29,7 @@ router.use((req, res, next) => {
 
 router.post('/log', (req, res) => {
     const { level, log_string, timestamp, metadata } = req.body;
-    if (!level || !log_string || !timestamp || !metadata) {
+    if (!level || !log_string || !timestamp || !metadata || !metadata.source) {
         return res.status(400).json({ error: 'Invalid log format' });
     }
     if (level !== 'info' && level !== 'error' && level !== 'success') {

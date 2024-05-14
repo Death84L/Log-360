@@ -28,14 +28,14 @@ router.use((req, res, next) => {
 });
 
 router.post('/log', (req, res) => {
-    const { level, log_string, timestamp, source } = req.body;
-    if (!level || !log_string || !timestamp || !source) {
+    const { level, log_string, timestamp, metadata } = req.body;
+    if (!level || !log_string || !timestamp || !metadata) {
         return res.status(400).json({ error: 'Invalid log format' });
     }
     if (level !== 'info' && level !== 'error' && level !== 'success') {
         return res.status(400).json({ error: 'Invalid log level' });
     }
-
+    const source=metadata.source;
     let apiConfig = logConfig.apis[source];
     if (!apiConfig) {
         const newLogPath = `${source}.log`;
@@ -47,9 +47,7 @@ router.post('/log', (req, res) => {
         level,
         log_string,
         timestamp,
-        metadata:{
-            source
-        }
+        metadata
     };
 
     fs.appendFileSync(apiConfig.path, JSON.stringify(logData) + '\n');
